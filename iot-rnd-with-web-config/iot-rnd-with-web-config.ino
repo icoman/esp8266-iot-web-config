@@ -27,7 +27,7 @@ const int LED = 16; //GPIO16
 
 int httpsPort;
 const char *ssid, *password;
-unsigned long int rate;
+unsigned long int rate = 0;
 const char *host, *tag;
 const char *write_key, *read_key;
 
@@ -60,12 +60,19 @@ void setup(void){
     return;
   }
   delay(1000);
-  loadConfig();
-  rate = 0;
+  bool have_config = loadConfig();
+  if(!have_config) {
+    //force start AP
+    flagAP = 1;
+    blinkLED();
+    start_AP_config(DEFAULT_AP_SSID, DEFAULT_AP_PASSWD);
+    return;
+  }
   JsonObject root = doc.as<JsonObject>();
   host = (const char *) root["host"];
   if(0 != strlen(host)) {
     httpsPort = atoi(root["port"]);
+    //rate = atol(root["rate"] | "10000");
     rate = atol(root["rate"]);
     ssid = (const char *) root["ssid"];
     password = (const char *) root["passwd"];
@@ -156,6 +163,7 @@ uint8_t sendValues(){
 unsigned long int cnt = 0;
 void loop(void){
   delay(1);
+  if(rate<10000) rate = 10000;
   if(flagAP) server.handleClient();
   if (0 == digitalRead(BUTTON_FLASH)){
     if(!flagAP){
