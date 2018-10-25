@@ -136,6 +136,7 @@ void start_AP_config(char *ssid, char *password){
   Serial.println("Start AP.");
   Serial.print("SSID: ");Serial.println(ssid);
   Serial.print("Password: ");Serial.println(password);
+  WiFi.mode(WIFI_AP_STA);
   WiFi.softAP(ssid, password);
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");

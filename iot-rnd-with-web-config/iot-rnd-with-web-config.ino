@@ -80,6 +80,7 @@ void setup(void){
     read_key = (const char *) root["rkey"];
     tag = (const char *) root["tag"];
     Serial.print("connecting to "); Serial.println(ssid);
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
